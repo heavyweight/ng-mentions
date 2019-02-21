@@ -6,7 +6,7 @@ import {
   ComponentFactoryResolver,
   ContentChild,
   ElementRef,
-  EventEmitter,
+  EventEmitter, HostBinding,
   HostListener,
   Input,
   NgZone,
@@ -65,6 +65,8 @@ import {
         (keydown)="onKeyDown($event)"
         (blur)="onBlur($event)"
         (select)="onSelect($event)"
+        (focus)="focused = true"
+        (focusout)="focused = false"
         (mouseup)="onSelect($event)"
         (ngModelChange)="onChange($event)"
         (scroll)="onTextAreaScroll()"
@@ -75,13 +77,13 @@ import {
   `,
   styles: [
     'ng-mentions {position: relative;}',
-    'ng-mentions textarea {position:relative; background-color: transparent !important;}', `ng-mentions .highlighter {
+    'ng-mentions textarea {position:relative; background-color: transparent !important; opacity: 0}',
+    `ng-mentions .highlighter {
         position: absolute;
         top:      0;
         left:     0;
         right:    0;
         bottom:   0;
-        color:    transparent;
         overflow: hidden !important;
     }`,
     `ng-mentions highlighted {
@@ -91,6 +93,12 @@ import {
         margin:           -1px;
         overflow-wrap:    break-word;
         background-color: lightblue;
+    }`,
+    `ng-mentions.focused .highlighter {
+        color: transparent;
+    }`,
+    `ng-mentions.focused textarea {
+        opacity: 1;
     }`
   ],
   preserveWhitespaces: false,
@@ -209,6 +217,8 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   @ContentChild(TemplateRef) mentionListTemplate: TemplateRef<any>;
   @ViewChild('input') textAreaInputElement: ElementRef;
   @ViewChild('highlighter') highlighterElement: ElementRef;
+
+  @HostBinding('class.focused') focused = false;
 
   displayContent: string = '';
   lines: Line[] = [];
