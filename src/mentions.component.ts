@@ -434,6 +434,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
         this.searchString = '';
         this.stopSearch = true;
         this.mentionsList.show = false;
+        this.mentionsList.resetScroll();
         this.changeDetector.detectChanges();
         setTimeout(() => {
           setCaretPosition(this.textAreaInputElement.nativeElement, caretPosition);
