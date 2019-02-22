@@ -111,6 +111,13 @@ export class NgMentionsListComponent implements OnInit {
     this._top = coords.top;
     this._left = coords.left + element.offsetLeft;
     this.list.nativeElement.scrollTop = 0;
+
+    setTimeout(() => {
+      const rect = this.list.nativeElement.getBoundingClientRect();
+      if (rect.x + rect.width > window.innerWidth) {
+        this._left = this._left - Math.abs(window.innerWidth - (rect.x + rect.width));
+      }
+    })
   }
 
   public resetScroll() {
