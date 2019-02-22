@@ -63,6 +63,7 @@ import {
         [ngModel]="displayContent"
         [ngClass]="textAreaClassNames"
         (keydown)="onKeyDown($event)"
+        (input)="onInput($event)"
         (blur)="onBlur($event)"
         (select)="onSelect($event)"
         (focus)="focused = true"
@@ -227,6 +228,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   selectionStart: number;
   selectionEnd: number;
   mentions: any[] = [];
+  inputFallback = false;
 
   get readonly(): string {
     return this.disabled ? 'readonly' : null;
@@ -318,8 +320,23 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
     }
   }
 
+  public onInput(event: any) {
+    if (this.inputFallback && event.data) {
+      let characterPressed = event.data;
+      let keyCode = characterPressed.charCodeAt(0);
+      this.onKeyDown({
+        which: keyCode,
+        keyCode: keyCode,
+        key: characterPressed
+      });
+    }
+  }
+
   public onKeyDown(event: any) {
     let caretPosition: number = getCaretPosition(this.textAreaInputElement.nativeElement);
+    if (this.inputFallback) {
+      caretPosition--;
+    }
     let characterPressed = event.key;
     let keyCode = event.which || event.keyCode;
     if (!characterPressed) {
@@ -328,6 +345,12 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
       if (!event.shiftKey && (characterCode >= 65 && characterCode <= 90)) {
         characterPressed = String.fromCharCode(characterCode + 32);
       }
+    }
+
+    this.inputFallback = keyCode === 229;
+
+    if (this.inputFallback) {
+      return;
     }
 
     if (keyCode === Key.Enter && event.wasSelection && caretPosition < this.startPos) {
