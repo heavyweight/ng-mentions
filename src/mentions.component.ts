@@ -153,6 +153,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
     }
   }
   @Input() parsedContent: string;
+  @Input() autoexpand = false;
 
   /**
    * An event emitted, after the trigger character has been typed, with the user-entered search string.
@@ -269,6 +270,14 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   }
 
   public onInput(event: any) {
+    if (this.autoexpand) {
+      const textArea = this.textAreaInputElement.nativeElement;
+      // Reset textarea height to auto that correctly calculate the new height
+      textArea.style.height = 'auto';
+      // Set new height
+      textArea.style.height = `${textArea.scrollHeight}px`;
+    }
+
     if (this.inputFallback && event.data) {
       let characterPressed = event.data;
       let keyCode = characterPressed.charCodeAt(0);
@@ -522,6 +531,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
         this.triggerChange(value);
       }
     }
+    this.empty = !value;
   }
 
   private formatMentions(line: string): Line {
@@ -566,7 +576,6 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   private refreshStyles() {
     let element = this.textAreaInputElement.nativeElement;
     let computedStyle: any = getComputedStyle(element);
-    this.empty = !this.value;
 
     this.highlighterStyle = {};
     styleProperties.forEach(prop => {
