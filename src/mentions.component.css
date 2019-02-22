@@ -1,0 +1,53 @@
+ng-mentions {
+  position: relative;
+}
+
+ng-mentions textarea {
+  position: relative;
+  background-color: transparent !important;
+  opacity: 0
+}
+
+ng-mentions .highlighter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden !important;
+}
+
+ng-mentions .highlighter .lines {
+  /* preserve whitespace */
+  white-space: pre;
+}
+
+ng-mentions .highlighter .parsed-content {
+  display: block;
+}
+
+ng-mentions highlighted {
+  display: inline;
+  border-radius: 3px;
+  padding: 1px;
+  margin: -1px;
+  overflow-wrap: break-word;
+}
+
+ng-mentions.focused .highlighter highlighted {
+  background-color: lightblue;
+  color: transparent;
+}
+
+ng-mentions.focused .highlighter .lines {
+  color: transparent;
+  display: block;
+}
+
+ng-mentions.focused .highlighter .parsed-content {
+  display: none;
+}
+
+ng-mentions.focused textarea, ng-mentions.empty textarea {
+  opacity: 1;
+}

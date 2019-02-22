@@ -45,63 +45,8 @@ import {
 @Component({
   exportAs: 'ngMentions',
   selector: 'ng-mentions',
-  template: `
-      <div #highlighter class="highlighter" [ngClass]="textAreaClassNames" [attr.readonly]="readonly"
-           [ngStyle]="highlighterStyle">
-          <div *ngFor="let line of lines">
-              <ng-container *ngFor="let part of line.parts">
-                  <highlighted *ngIf="isPartMention(part)" [tag]="part.tag">{{formatMention(part)}}</highlighted>
-                  <ng-container *ngIf="!isPartMention(part)">{{part}}</ng-container>
-              </ng-container>
-              &nbsp;
-          </div>
-      </div>
-      <textarea
-        #input
-        [rows]="rows"
-        [cols]="columns"
-        [ngModel]="displayContent"
-        [ngClass]="textAreaClassNames"
-        (keydown)="onKeyDown($event)"
-        (input)="onInput($event)"
-        (blur)="onBlur($event)"
-        (select)="onSelect($event)"
-        (focus)="focused = true"
-        (focusout)="focused = false"
-        (mouseup)="onSelect($event)"
-        (ngModelChange)="onChange($event)"
-        (scroll)="onTextAreaScroll()"
-        [disabled]="disabled"
-        [required]="required"
-        [placeholder]="placeholder"
-      ></textarea>
-  `,
-  styles: [
-    'ng-mentions {position: relative;}',
-    'ng-mentions textarea {position:relative; background-color: transparent !important; opacity: 0}',
-    `ng-mentions .highlighter {
-        position: absolute;
-        top:      0;
-        left:     0;
-        right:    0;
-        bottom:   0;
-        overflow: hidden !important;
-    }`,
-    `ng-mentions highlighted {
-        display:          inline;
-        border-radius:    3px;
-        padding:          1px;
-        margin:           -1px;
-        overflow-wrap:    break-word;
-        background-color: lightblue;
-    }`,
-    `ng-mentions.focused .highlighter {
-        color: transparent;
-    }`,
-    `ng-mentions.focused textarea {
-        opacity: 1;
-    }`
-  ],
+  templateUrl: './mentions.component.html',
+  styleUrls: ['./mentions.component.css'],
   preserveWhitespaces: false,
   encapsulation: ViewEncapsulation.None
 })
@@ -207,6 +152,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
       this.mentionsList.items = value;
     }
   }
+  @Input() parsedContent: string;
 
   /**
    * An event emitted, after the trigger character has been typed, with the user-entered search string.
@@ -214,12 +160,14 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   @Output('search') readonly search: EventEmitter<string> = new EventEmitter<string>();
   @Output('valueChanges') readonly valueChanges: EventEmitter<string> = new EventEmitter<string>();
   @Output('stateChanges') readonly stateChanges: Subject<void> = new Subject<void>();
+  @Output('focusLost') readonly focusLost: EventEmitter<void> = new EventEmitter<void>();
 
   @ContentChild(TemplateRef) mentionListTemplate: TemplateRef<any>;
   @ViewChild('input') textAreaInputElement: ElementRef;
   @ViewChild('highlighter') highlighterElement: ElementRef;
 
   @HostBinding('class.focused') focused = false;
+  @HostBinding('class.empty') empty = false;
 
   displayContent: string = '';
   lines: Line[] = [];
@@ -248,7 +196,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   private startNode;
   mentionsList: NgMentionsListComponent;
   private stopSearch: boolean = false;
-  private markupSearch: MarkupMention;
+  markupSearch: MarkupMention;
   private _destroyed: Subject<void> = new Subject<void>();
   private newLine: RegExp = /\n/g;
   private _errorState: boolean = false;
@@ -387,6 +335,8 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
     if (this.mentionsList) {
       this.mentionsList.show = false;
     }
+    this.focused = false;
+    this.focusLost.emit();
   }
 
   public isPartMention(part: any): boolean {
@@ -616,6 +566,8 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   private refreshStyles() {
     let element = this.textAreaInputElement.nativeElement;
     let computedStyle: any = getComputedStyle(element);
+    this.empty = !this.value;
+
     this.highlighterStyle = {};
     styleProperties.forEach(prop => {
       this.highlighterStyle[prop] = computedStyle[prop];

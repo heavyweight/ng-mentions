@@ -1,0 +1,29 @@
+<div #highlighter class="highlighter" [ngClass]="textAreaClassNames" [attr.readonly]="readonly"
+     [ngStyle]="highlighterStyle">
+  <div *ngFor="let line of lines" class="lines">
+    <ng-container *ngFor="let part of line.parts">
+      <highlighted *ngIf="isPartMention(part)" [tag]="part.tag">{{formatMention(part)}}</highlighted>
+      <ng-container *ngIf="!isPartMention(part)">{{part}}</ng-container>
+    </ng-container>
+    &nbsp;
+  </div>
+  <div class="parsed-content" *ngIf="parsedContent">{{parsedContent}}</div>
+</div>
+<textarea
+  #input
+  [rows]="rows"
+  [cols]="columns"
+  [ngModel]="displayContent"
+  [ngClass]="textAreaClassNames"
+  (keydown)="onKeyDown($event)"
+  (input)="onInput($event)"
+  (blur)="onBlur($event)"
+  (select)="onSelect($event)"
+  (focus)="focused = true"
+  (mouseup)="onSelect($event)"
+  (ngModelChange)="onChange($event)"
+  (scroll)="onTextAreaScroll()"
+  [disabled]="disabled"
+  [required]="required"
+  [placeholder]="placeholder"
+></textarea>
