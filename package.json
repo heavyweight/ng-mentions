@@ -1,5 +1,5 @@
 {
-  "name": "ng-mentions",
+  "name": "ng-mentionz",
   "version": "2.0.1",
   "description": "Angular components & directives for customizable mentions",
   "repository": {
@@ -24,8 +24,10 @@
     "highlight",
     "components"
   ],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "preinstall": "node misc/preinstall.js",
     "commitmsg": "node misc/validate-commit.js",
     "build": "yarn build:lib && yarn demo:build",
     "test": "yarn check-format && yarn lint && yarn test:lib",
@@ -53,7 +55,8 @@
     "clean:test": "[[ ! -e coverage/ ]] || rm -r coverage/",
     "clean:demo": "[[ ! -e demo/dist/ ]] || rm -r demo/dist",
     "clean:demo:deploy": "[[ ! -e .publish/ ]] || rm -fr .publish/",
-    "clean:demo:plunks": "[[ ! -e demo/src/public/app/components ]] || rm -r demo/src/public/app/components"
+    "clean:demo:plunks": "[[ ! -e demo/src/public/app/components ]] || rm -r demo/src/public/app/components",
+    "prepublish": "yarn run lint && yarn test:lib && yarn run build:lib"
   },
   "dependencies": {
   },
