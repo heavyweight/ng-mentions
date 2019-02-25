@@ -1,13 +1,13 @@
 <div #highlighter class="highlighter" [ngClass]="textAreaClassNames" [attr.readonly]="readonly"
      [ngStyle]="highlighterStyle">
-  <div *ngFor="let line of lines" class="lines">
+  <div *ngFor="let line of lines" class="lines" [class.has-parsed-content]="parsedContent">
     <ng-container *ngFor="let part of line.parts">
       <highlighted *ngIf="isPartMention(part)" [tag]="part.tag">{{formatMention(part)}}</highlighted>
       <ng-container *ngIf="!isPartMention(part)">{{part}}</ng-container>
     </ng-container>
     &nbsp;
   </div>
-  <div class="parsed-content" *ngIf="parsedContent">{{parsedContent}}</div>
+  <div class="parsed-content" *ngIf="parsedContent" [innerHTML]="parsedContent"></div>
 </div>
 <textarea
   #input

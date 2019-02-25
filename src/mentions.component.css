@@ -19,7 +19,11 @@ ng-mentions .highlighter {
 
 ng-mentions .highlighter .lines {
   /* preserve whitespace */
-  white-space: pre;
+  white-space: pre-wrap;
+}
+
+ng-mentions .highlighter .lines .has-parsed-content {
+  display: none;
 }
 
 ng-mentions .highlighter .parsed-content {
