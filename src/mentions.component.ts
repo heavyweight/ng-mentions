@@ -4,9 +4,9 @@ import {
   ChangeDetectorRef,
   Component,
   ComponentFactoryResolver,
-  ContentChild,
   ElementRef,
-  EventEmitter, HostBinding,
+  EventEmitter,
+  HostBinding,
   HostListener,
   Input,
   NgZone,
@@ -154,6 +154,8 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   }
   @Input() parsedContent: string;
   @Input() autoexpand = false;
+  @Input() mentionListItemTemplate: TemplateRef<any>;
+  @Input() mentionListHeaderTemplate: TemplateRef<any>;
 
   /**
    * An event emitted, after the trigger character has been typed, with the user-entered search string.
@@ -163,7 +165,6 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   @Output('stateChanges') readonly stateChanges: Subject<void> = new Subject<void>();
   @Output('focusLost') readonly focusLost: EventEmitter<void> = new EventEmitter<void>();
 
-  @ContentChild(TemplateRef) mentionListTemplate: TemplateRef<any>;
   @ViewChild('input') textAreaInputElement: ElementRef;
   @ViewChild('highlighter') highlighterElement: ElementRef;
 
@@ -281,11 +282,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
     if (this.inputFallback && event.data) {
       let characterPressed = event.data;
       let keyCode = characterPressed.charCodeAt(0);
-      this.onKeyDown({
-        which: keyCode,
-        keyCode: keyCode,
-        key: characterPressed
-      });
+      this.onKeyDown({which: keyCode, keyCode: keyCode, key: characterPressed});
     }
   }
 
@@ -475,7 +472,8 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
       let componentFactory = this.componentResolver.resolveComponentFactory(NgMentionsListComponent);
       let componentRef = this.viewContainer.createComponent(componentFactory);
       this.mentionsList = componentRef.instance;
-      this.mentionsList.itemTemplate = this.mentionListTemplate;
+      this.mentionsList.itemTemplate = this.mentionListItemTemplate;
+      this.mentionsList.headerTemplate = this.mentionListHeaderTemplate;
       this.mentionsList.displayTransform = this.displayTransform.bind(this);
       this.mentionsList.itemSelected.subscribe(item => {
         this.textAreaInputElement.nativeElement.focus();

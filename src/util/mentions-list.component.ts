@@ -16,8 +16,15 @@ import {getCaretCoordinates} from './utils';
       <ng-template #defaultItemTemplate let-item="item">
           {{transformItem(item)}}
       </ng-template>
+      <ng-template #defaultHeaderTemplate let-item="item">
+          {{item.type | titlecase}}s:
+      </ng-template>
       <ul #list class="dropdown-menu scrollable-menu">
           <li *ngFor="let item of items; let i = index" [class.active]="activeIndex === i">
+              <span class="dropdown-header" *ngIf="headerTemplate && (i === 0 || item.type !== items[i-1].type)">
+                  <ng-template [ngTemplateOutlet]="headerTemplate || defaultHeaderTemplate"
+                               [ngTemplateOutletContext]="{item:item,index:i}"></ng-template>
+              </span>
               <a href class="dropdown-item" (click)="onItemClick($event, i, item)">
                   <ng-template [ngTemplateOutlet]="itemTemplate"
                                [ngTemplateOutletContext]="{item:item,index:i}"></ng-template>
@@ -29,13 +36,14 @@ import {getCaretCoordinates} from './utils';
     'mentions-list {position: absolute;display: none;}', 'mentions-list.drop-up {transform: translateY(-100%);}',
     'mentions-list.show {display: block;} mentions-list.no-items {display: none;}',
     'mentions-list .scrollable-menu {display: block;height: auto;max-height:300px;overflow:auto;}',
-    'mentions-list li.active {background: #f7f7f9;}'
+    'mentions-list li.active a {background: #f7f7f9;}'
   ],
   encapsulation: ViewEncapsulation.None
 })
 export class NgMentionsListComponent implements OnInit {
   public items: any[];
   public itemTemplate: TemplateRef<any>;
+  public headerTemplate: TemplateRef<any>;
   public displayTransform: (..._: string[]) => string;
   public textAreaElement: HTMLTextAreaElement;
 
@@ -47,6 +55,7 @@ export class NgMentionsListComponent implements OnInit {
   }
 
   @ViewChild('defaultItemTemplate') defaultItemTemplate: TemplateRef<any>;
+  @ViewChild('defaultHeaderTemplate') defaultHeaderTemplate: TemplateRef<any>;
   @ViewChild('list') list: ElementRef;
   @HostBinding('class.show') public show: boolean = false;
   @HostBinding('class.drop-up') public dropUp: boolean = false;

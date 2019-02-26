@@ -22,7 +22,7 @@ ng-mentions .highlighter .lines {
   white-space: pre-wrap;
 }
 
-ng-mentions .highlighter .lines .has-parsed-content {
+ng-mentions .highlighter .lines.has-parsed-content {
   display: none;
 }
 
@@ -43,7 +43,7 @@ ng-mentions.focused .highlighter highlighted {
   color: transparent;
 }
 
-ng-mentions.focused .highlighter .lines {
+ng-mentions.focused .highlighter .lines, ng-mentions.focused .highlighter .lines.has-parsed-content {
   color: transparent;
   display: block;
 }
