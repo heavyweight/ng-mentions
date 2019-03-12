@@ -36,7 +36,8 @@ import {getCaretCoordinates} from './utils';
     'mentions-list {position: absolute;display: none;}', 'mentions-list.drop-up {transform: translateY(-100%);}',
     'mentions-list.show {display: block;} mentions-list.no-items {display: none;}',
     'mentions-list .scrollable-menu {display: block;height: auto;max-height:300px;overflow:auto;}',
-    'mentions-list li.active a {background: #f7f7f9;}'
+    'mentions-list li.active a {background: #f7f7f9;}',
+    'mentions-list li .dropdown-header {display: block;}'
   ],
   encapsulation: ViewEncapsulation.None
 })
@@ -124,7 +125,8 @@ export class NgMentionsListComponent implements OnInit {
     setTimeout(() => {
       const rect = this.list.nativeElement.getBoundingClientRect();
       if (rect.x + rect.width > window.innerWidth) {
-        this._left = this._left - Math.abs(window.innerWidth - (rect.x + rect.width));
+        const calcLeft = this._left - Math.abs(window.innerWidth - (rect.x + rect.width));
+        this._left = calcLeft > 0 ? calcLeft : 0;
       }
     })
   }
