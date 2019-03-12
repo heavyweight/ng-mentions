@@ -154,6 +154,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   }
   @Input() parsedContent: string;
   @Input() autoexpand = false;
+  @Input() commitOnCMDEnter = false;
   @Input() mentionListItemTemplate: TemplateRef<any>;
   @Input() mentionListHeaderTemplate: TemplateRef<any>;
 
@@ -163,7 +164,10 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   @Output('search') readonly search: EventEmitter<string> = new EventEmitter<string>();
   @Output('valueChanges') readonly valueChanges: EventEmitter<string> = new EventEmitter<string>();
   @Output('stateChanges') readonly stateChanges: Subject<void> = new Subject<void>();
+  @Output('focusIn') readonly focusIn: EventEmitter<void> = new EventEmitter<void>();
   @Output('focusLost') readonly focusLost: EventEmitter<void> = new EventEmitter<void>();
+  @Output('escapePressed') readonly escapePressed: EventEmitter<void> = new EventEmitter<void>();
+  @Output('cmdEnter') readonly cmdEnter: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('input') textAreaInputElement: ElementRef;
   @ViewChild('highlighter') highlighterElement: ElementRef;
@@ -198,7 +202,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   private startNode;
   mentionsList: NgMentionsListComponent;
   private stopSearch: boolean = false;
-  markupSearch: MarkupMention;
+  markupSearch: MarkupMention = markupToRegExp(this.mentionMarkup);
   private _destroyed: Subject<void> = new Subject<void>();
   private newLine: RegExp = /\n/g;
   private _errorState: boolean = false;
@@ -271,14 +275,6 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   }
 
   public onInput(event: any) {
-    if (this.autoexpand) {
-      const textArea = this.textAreaInputElement.nativeElement;
-      // Reset textarea height to auto that correctly calculate the new height
-      textArea.style.height = 'auto';
-      // Set new height
-      textArea.style.height = `${textArea.scrollHeight}px`;
-    }
-
     if (this.inputFallback && event.data) {
       let characterPressed = event.data;
       let keyCode = characterPressed.charCodeAt(0);
@@ -304,6 +300,20 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
     this.inputFallback = keyCode === 229;
 
     if (this.inputFallback) {
+      return;
+    }
+
+    if (event && event.stopPropagation) {
+      event.stopPropagation();
+    }
+
+    if (keyCode === Key.Escape) {
+      this.escapePressed.emit();
+    }
+
+    if (this.commitOnCMDEnter && keyCode === Key.Enter && event.metaKey) {
+      this.cmdEnter.emit();
+      event.preventDefault();
       return;
     }
 
@@ -333,7 +343,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
   public onBlur(event: MouseEvent|KeyboardEvent) {
     if (event instanceof FocusEvent && event.relatedTarget) {
       let element = event.relatedTarget as HTMLElement;
-      if (element.classList.contains('dropdown-item')) {
+      if (element.classList.contains('dropdown-item') || element.classList.contains('keep-focus')) {
         return;
       }
     }
@@ -343,6 +353,11 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
     }
     this.focused = false;
     this.focusLost.emit();
+  }
+
+  public onFocus(event) {
+    this.focused = true;
+    this.focusIn.emit(event);
   }
 
   public isPartMention(part: any): boolean {
@@ -573,6 +588,13 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
 
   private refreshStyles() {
     let element = this.textAreaInputElement.nativeElement;
+    if (this.autoexpand) {
+      // Reset textarea height to auto that correctly calculate the new height
+      element.style.height = 'auto';
+      // Set new height
+      element.style.height = `${element.scrollHeight}px`;
+    }
+
     let computedStyle: any = getComputedStyle(element);
 
     this.highlighterStyle = {};
