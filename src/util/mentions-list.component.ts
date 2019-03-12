@@ -151,13 +151,15 @@ export class NgMentionsListComponent implements OnInit {
 
   private scrollToActiveItem() {
     let element = this.list.nativeElement as HTMLElement;
-    if (this.activeIndex === 0) {
-      element.scrollTop = 0;
-    } else {
-      const activeElement = element.querySelector('li.active') as HTMLElement;
-      if (activeElement) {
-        element.scrollTop = activeElement.offsetTop;
+    setTimeout(() => {
+      if (this.activeIndex === 0) {
+        element.scrollTop = 0;
+      } else {
+        const activeElement = element.querySelector('li.active') as HTMLElement;
+        if (activeElement) {
+          element.scrollTop = activeElement.offsetTop;
+        }
       }
-    }
+    });
   }
 }
