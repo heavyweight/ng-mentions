@@ -7,7 +7,7 @@
     </ng-container>
     &nbsp;
   </div>
-  <div class="parsed-content" *ngIf="parsedContent" [innerHTML]="parsedContent"></div>
+  <div class="parsed-content" (click)="input.focus()" [hidden]="!parsedContent" [innerHTML]="parsedContent"></div>
 </div>
 <textarea
   #input
