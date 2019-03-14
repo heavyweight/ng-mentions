@@ -3,7 +3,7 @@ export * from './mention.component';
 
 import {NgModule} from '@angular/core';
 
-import {NgMentionsModule} from '@nth-cloud/ng-mentions';
+import {NgMentionsModule} from 'ng-mentionz';
 import {NthdSharedModule} from '../../shared';
 import {NthdComponentsSharedModule} from '../shared';
 import {NthdMentionsComponent} from './mention.component';

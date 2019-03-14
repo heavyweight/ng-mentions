@@ -12,7 +12,7 @@
     "declaration": false,
     "sourceMap": true,
     "paths": {
-      "@nth-cloud/ng-mentions": ["../src/index"]
+      "ng-mentionz": ["../src/index"]
     }
   },
   "include": [
