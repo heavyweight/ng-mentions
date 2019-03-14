@@ -55,6 +55,7 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
    * The character to trigger the mentions list when a user is typing in the input field
    */
   @Input('triggerChar') triggerChar: string = '@';
+  @Input('includeTriggerChar') includeTriggerChar = false;
   /**
    * The markup used to format a mention in the model value
    */
@@ -370,14 +371,14 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
 
   private displayTransform(..._: string[]): string {
     let replaceIndex = this.markupSearch.groups[this.displayName];
-    return _[replaceIndex];
+    return (this.includeTriggerChar ? '@'  : '') + _[replaceIndex];
   }
 
   private _formatMention(contents: string): string {
     let replaceValue = `\$${this.displayName}`, replaceIndex;
     let result = contents.replace(this.markupSearch.regEx, replaceValue);
     if (result === replaceValue) {
-      replaceIndex = `\$${this.markupSearch.groups[this.displayName]}`;
+      replaceIndex = (this.includeTriggerChar ? '@'  : '') + `\$${this.markupSearch.groups[this.displayName]}`;
       result = contents.replace(this.markupSearch.regEx, replaceIndex);
     }
 
