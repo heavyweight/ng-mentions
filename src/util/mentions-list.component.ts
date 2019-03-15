@@ -25,7 +25,7 @@ import {getCaretCoordinates} from './utils';
                   <ng-template [ngTemplateOutlet]="headerTemplate || defaultHeaderTemplate"
                                [ngTemplateOutletContext]="{item:item,index:i}"></ng-template>
               </span>
-              <a href class="dropdown-item" (click)="onItemClick($event, i, item)">
+              <a href class="dropdown-item" (mousedown)="onItemClick($event, i, item)" >
                   <ng-template [ngTemplateOutlet]="itemTemplate"
                                [ngTemplateOutletContext]="{item:item,index:i}"></ng-template>
               </a>
