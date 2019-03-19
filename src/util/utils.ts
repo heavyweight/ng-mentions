@@ -219,9 +219,6 @@ export function applyChangeToValue(
     displayTransform: (..._: string[]) => string) {
   let oldPlainTextValue = getPlainText(value, markupMention, displayTransform);
   let lengthDelta = oldPlainTextValue.length - plainTextValue.length;
-  if (!selectionStartBeforeChange) {
-    selectionStartBeforeChange = selectionEndBeforeChange + lengthDelta;
-  }
   if (!selectionEndBeforeChange) {
     selectionEndBeforeChange = selectionStartBeforeChange;
   }
