@@ -118,7 +118,7 @@ export class NgMentionsListComponent implements OnInit {
   public position() {
     const element = this.textAreaElement;
     let coords = getCaretCoordinates(element, element.selectionStart);
-    this._top = coords.top;
+    this._top = coords.top + this.textAreaElement.parentElement.offsetTop;
     this._left = coords.left + element.offsetLeft;
     this.list.nativeElement.scrollTop = 0;
 
