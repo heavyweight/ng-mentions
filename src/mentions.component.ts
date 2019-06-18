@@ -421,9 +421,9 @@ export class NgMentionsComponent implements OnChanges, OnInit, AfterViewInit, Af
         let item = event.item || this.mentionsList.selectedItem;
         let newValue = replacePlaceholders(item, this.markupSearch);
         let newDisplayValue = this._formatMention(newValue);
-        caretPosition = this.startPos + newDisplayValue.length;
+        caretPosition = this.startPos + newDisplayValue.length + 1;
         let searchString = this.searchString || '';
-        value = value.substring(0, start) + newValue + value.substring(start + searchString.length + 1, value.length);
+        value = value.substring(0, start) + newValue + ' ' + value.substring(start + searchString.length + 1, value.length);
         this.parseLines(value);
         this.startPos = -1;
         this.searchString = '';
